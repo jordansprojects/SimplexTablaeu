@@ -25,11 +25,12 @@ let retrieve_option() =
  selection.[0]
 
 
-//  count_variables : Tells how many variables there are in the LO-Model
+//  total_variables : Tells how many variables there are in the LO-Model
 // @param lis: the list of user input
 // @return: the list of variables (the # of variables is inferred from the size of the list)
-let count_variables(lis:list<string>)  =
-  Regex.Replace((lis |> String.concat ""), "\d|\s|\+|-|=|max|min", "") |> Seq.toList |> Seq.distinct
+let total_variables(lis:list<string>)  =
+  // regex string should be edited to support division
+  Regex.Replace((lis |> String.concat ""), "\d|\s|\+|-|=|max|min|", "") |> Seq.toList |> Seq.distinct
 
 
 //read_input : reads user input until EOF is activated
@@ -49,11 +50,18 @@ let perform_simplex() =
 
 // Turns the raw user input into simplex tableau that the program can work with
 let parse_input(raw_list:list<string>) = 
- let vars = count_variables(raw_list.Tail) 
- printfn "Debug, variables in this LO Model : "
- vars |> Seq.iter (printfn "%c")
+
+ let vars = total_variables(raw_list.Tail) 
+  // retrieve the sheer number of variables 
+ let num_vars = vars|> Seq.length
+
  let objective_func = raw_list.[0]
+ let constraints = raw_list.Tail
+ printfn "DEBUG:"
  printfn "obj function: %s" objective_func
+ printfn "s.t. "
+ for line in constraints do 
+  printfn "%s" line
 
  
 
